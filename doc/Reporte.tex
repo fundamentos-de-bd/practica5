@@ -1,0 +1,100 @@
+\documentclass{article}
+
+% Formato de página
+\usepackage[letterpaper, margin = 1.5cm]{geometry}
+
+% Más opciones para enumerar
+\usepackage{enumitem}
+
+% Manejo de imágenes
+\usepackage{graphicx}
+\usepackage{wrapfig}
+\graphicspath{{img/}}
+
+\begin{document}
+    \title{
+        Fundamentos de bases de datos \\
+        Práctica 4 \\
+        Modelo Relacional
+    }
+    \author{
+        Díaz Gómez Silvia \\
+        Eugenio Aceves Narciso Isaac \\
+        Quiroz Castañeda Edgar
+    }
+    \date {
+        22 de marzo del 2019    
+    }
+    \maketitle
+
+    \section{Álgebra relacional}
+    Utilizando el diagrama relacional que haya creado deberán escribir las
+    siguientes consultas utilizando los eementos del álgebra relacional.
+    \begin{enumerate}
+        \item {
+            Conocer los datos de las sucursales que tengas más de 15 años
+        }
+        \item {
+            Conocer el puesto, nombre, edad y la fecha en la que inició a
+            trabajar de todos los empleados.
+        }
+        \item {
+            Conocer el puesto y edad de todos los empleados que trabajan en más 
+            de una sucursal.
+        }
+        \item {
+            COnocer lso productos que se venden de cada sucursal, para esto se 
+            debe regresar el identificador de la sucursal, seguido del
+            identificador del producto y la descripción de este.
+        }
+        \item {
+            Conocer los departamentos que tienen cada una de las sucursales.
+        }
+        \item {
+            Conocer cuales son los departamentos que tienene un común todas las 
+            sucursales.
+        }
+        \item {
+            Conocer el cliente más antiguo (el primero en ser registrado, según
+            la fecha de registro) en el programa de tarjeta digital de cada una
+            de las sucursales registradas.
+        }
+        \item {
+            Conocer cuáles son los productos que tienen en común cada uno de los
+            departamentos de las diferentes sucursales.
+        }
+        \item {
+            Conocer cuales son TODOS los productos que se tienen en cada uno de
+            los departamentos de las diferentes sucursales.
+        }
+        \item {
+            Conocer cuál es la sucursal con mayor número de productos
+            registrados en sus diferentes departamentos.
+        }
+        \item {
+            Eliminar a los empleados que tengan más de 3 trabajos en diferentes 
+            sucursales.
+        }
+        \item {
+            Eliminar a las sucursales que tengan menos de 1 departamento
+            registrado.
+        }
+        \item {
+            Eliminar a los clientes que no hayan utilziado su tarjeta en los
+            últimos tres meses.
+        }
+        \item {
+            Insertar una nieva sucursal en el estado de México.
+        }
+        \item {
+            Insertar la información de 3 departamentos a la sucursal que fue
+            insertada anteriormente.
+        }
+        \item {
+            Actualizar el número de departamentos de la sucursal con menos
+            número de éstos, para que ahora tenga la misma cantidad de departamentos
+            que la sucursal con mayor números de departamentos-
+        }
+    \end{enumerate}
+
+\end{document}
