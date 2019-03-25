@@ -6,7 +6,11 @@
 % Más opciones para enumerar
 \usepackage{enumitem}
 
+% Manejo de ecuaciones
+\usepackage{amsmath}
+
 % Manejo de imágenes
+\usepackage{float}
 \usepackage{graphicx}
 \usepackage{wrapfig}
 \graphicspath{{img/}}
@@ -26,38 +30,98 @@
         22 de marzo del 2019    
     }
     \maketitle
+    \section{Modificaciones al esquema}
+    \begin{figure}[H]
+        \includegraphics[scale=0.22]{img/practica04.jpeg}
+        \caption{Esquema anterior}
+    \end{figure}
+    Modificaciones a entidades
+    \begin{itemize}
+        \item A Empleado se le añaden los atributos de puesto y fecha reg, la
+        fecha en la que empezó a trabajar el empleado.
+        \item Se cambia el discriminante de Departamento de Localización a Id dep.
+        \item A Sucursal se le agrega el atributo de fecha fund, la fecha de 
+        establecimiento de esa sucursal.
+        \item A Sucursal se le agrean los datos de su dirección.
+        \item A Persona se le agrega la fecha nac, la fecha de nacimiento.
+        \item A Producto se le agrega el atributo de descrr, la descripción. Y 
+        se remplaza la llave compuesta por una llave sintética.
+    \end{itemize}
 
+    Modificaciones a relaciones
+    \begin{itemize}
+        \item Se introduce la tabla de ``Trabajar'' pues es posbile que un
+        empleado tenga más de un trabajo.
+    \end{itemize}
+    
     \section{Álgebra relacional}
     Utilizando el diagrama relacional que haya creado deberán escribir las
-    siguientes consultas utilizando los eementos del álgebra relacional.
+    siguientes consultas utilizando los elementos del álgebra relacional.
     \begin{enumerate}
         \item {
             Conocer los datos de las sucursales que tengas más de 15 años
+            \begin{align*}
+                r &\leftarrow (_{id\_suc}G_{tiempoDesde(fecha\_reg)}(Sucursal)) \\
+                r &\leftarrow \rho_{edad(tiempoDesde(fecha\_reg))}(r) \\
+                r &\leftarrow \sigma_{edad > 15}(r) \\
+                r &\leftarrow r \bowtie Sucursal
+            \end{align*}
         }
         \item {
-            Conocer el puesto, nombre, edad y la fecha en la que inició a
+            Conocer el puesto, nombre, edad y la fecha en la que iniciaron a
             trabajar de todos los empleados.
+            \begin{align*}
+                r &\leftarrow Empleado \bowtie Personas \\
+                r &\leftarrow (_{CURP}G_{tiempoDesde(fecha\_nac)}(r))\\
+                r &\leftarrow \rho_{edad(tiempoDesde(fecha\_nac))}(r) \\
+                r &\leftarrow \pi_{nombre, puesto, edad, fech\_reg}(r)
+            \end{align*}
         }
         \item {
             Conocer el puesto y edad de todos los empleados que trabajan en más 
             de una sucursal.
+            \begin{align*}
+                r &\leftarrow (_{id\_empleado}G_{count(id\_empleado)}(Trabajar)) \\
+                r &\leftarrow \rho_{num\_trabajos(count(id\_empleado)))}(r)\\
+                r &\leftarrow \sigma_{num\_trabajos>1}(r)\\
+                r &\leftarrow r \bowtie Empleados \bowtie Persona \\
+                r &\leftarrow (_{CURP}G_{tiempoDesde(fecha\_nac)}(r))\\
+                r &\leftarrow \rho_{edad(tiempoDesde(fecha\_nac))}(r) \\
+                r &\leftarrow \pi_{puesto, edad}(r)
+            \end{align*}
         }
         \item {
-            COnocer lso productos que se venden de cada sucursal, para esto se 
+            Conocer los productos que se venden de cada sucursal, para esto se 
             debe regresar el identificador de la sucursal, seguido del
             identificador del producto y la descripción de este.
+            \begin{align*}
+                r &\leftarrow \pi_{id\_dep, id\_suc}(Departamento \bowtie Sucursal)\\
+                r &\leftarrow \pi_{id\_suc, id\_prod, descripcion}(r \bowtie Producto)
+            \end{align*}
         }
         \item {
             Conocer los departamentos que tienen cada una de las sucursales.
+            \begin{align*}
+                r \leftarrow \sigma(Departamento)
+            \end{align*}
         }
         \item {
             Conocer cuales son los departamentos que tienene un común todas las 
             sucursales.
+            \begin{align*}
+                r &\leftarrow (_{tipo}G_{count(Tipo)}(Departamento)) \\
+                r &\leftarrow \rho_{num\_tip(count(Tipo))}(r) \\
+                g &\leftarrow count_{(id\_suc)}(Sucursal) \\
+                r &\leftarrow \sigma_{num\_tip = g}(r)
+            \end{align*}
         }
         \item {
             Conocer el cliente más antiguo (el primero en ser registrado, según
             la fecha de registro) en el programa de tarjeta digital de cada una
             de las sucursales registradas.
+            \begin{align*}
+                r \leftarrow G_{max(tiempoEntre(hoy, fechaReg))}(Clientes)
+            \end{align*}
         }
         \item {
             Conocer cuáles son los productos que tienen en común cada uno de los
@@ -74,17 +138,29 @@
         \item {
             Eliminar a los empleados que tengan más de 3 trabajos en diferentes 
             sucursales.
+            \begin{align*}
+                r &\leftarrow \rho_{count(id\_sucursal) = num\_trabajos}
+                (G_{count(id\_sucursal)}(Trabajar))\\
+                r &\leftarrow \sigma_{num\_trabajos > 3} (r) \\
+                r &\leftarrow \pi_{id\_empleado}(r) \bowtie Empleados\\
+                Empleados &\leftarrow Empleados - r
+            \end{align*}
         }
         \item {
             Eliminar a las sucursales que tengan menos de 1 departamento
             registrado.
         }
         \item {
-            Eliminar a los clientes que no hayan utilziado su tarjeta en los
+            Eliminar a los clientes que no hayan utilizado su tarjeta en los
             últimos tres meses.
+            \begin{align*}
+                r &\leftarrow \rho_{tiempoEntre(hoy, fechaReg)=''antig}
+                (_{id\_cliente}G_{tiempoEntre(hoy, fechaReg)}(Cliente)) \\
+                r &\leftarrow \sigma_{antig >}
+            \end{align*}
         }
         \item {
-            Insertar una nieva sucursal en el estado de México.
+            Insertar una nueva sucursal en el estado de México.
         }
         \item {
             Insertar la información de 3 departamentos a la sucursal que fue
@@ -93,7 +169,13 @@
         \item {
             Actualizar el número de departamentos de la sucursal con menos
             número de éstos, para que ahora tenga la misma cantidad de departamentos
-            que la sucursal con mayor números de departamentos-
+            que la sucursal con mayor números de departamentos.
+            \begin{align*}
+                r &\leftarrow \rho_{count(id\_sucursal) = num\_dep}
+                (_{id\_sucursal}G_{count(id\_sucursal)}(Departamento))\\
+                min &\leftarrow (_{id\_sucursal}G_{min(num_dep)(r)})
+                max &\leftarrow G_{max(num_dep)(r)}
+            \end{align*}
         }
     \end{enumerate}
 
