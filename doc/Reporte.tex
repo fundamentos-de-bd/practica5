@@ -137,8 +137,11 @@
         }
         \item {
             Conocer cuáles son los productos que tienen en común cada uno de los
-            departamentos de las diferentes sucursales.
-            
+            departamentos de las diferentes sucursales.      
+            \begin{align*}
+                r &\leftarrow \pi_{id\_suc}(Sucursal) \bowtie \pi_{id\dep}
+                (Departamento) \bowtie \pi_{id\_prod}(Producto)
+            \end{align*}
         }
         \item {
             Conocer cuales son TODOS los productos que se tienen en cada uno de
