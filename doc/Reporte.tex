@@ -56,6 +56,7 @@
         \item A Persona se le agrega la fecha nac, la fecha de nacimiento.
         \item A Producto se le agrega el atributo de descr, la descripción. Y 
         se remplaza la llave compuesta por una llave sintética.
+        \item En Departamento, el atributo Tipo se vuelve único.
     \end{itemize}
 
     Modificaciones a relaciones
@@ -139,10 +140,10 @@
             Conocer cuáles son los productos que tienen en común cada uno de los
             departamentos de las diferentes sucursales.      
             \begin{align*}
-                r &\leftarrow \pi_{id\_suc}(Sucursal) \bowtie \pi_{id\dep}
-                (Departamento) \bowtie \pi_{id\_prod}(Producto) \\
+                r &\leftarrow \pi_{id\_suc}(Sucursal) \bowtie
+                Departamento \bowtie \pi_{id\dep, id\_prod}(Producto) \\
                 numSuc &\leftarrow count(Sucursal) \\
-                r &\leftarrow (_{id\_dep, id\_prod}G_{count(id\_suc)}(r))
+                r &\leftarrow (_{tipo, id\_prod}G_{count(id\_suc)}(r))
                 r &\leftarrow \rho_{numSucProd(count(id\_suc))}(r) \\
                 r &\leftarrow \sigma_{numSucProd = numSuc}(r)
             \end{align*}
@@ -224,7 +225,22 @@
         \item {
             Actualizar el número de departamentos de la sucursal con menos
             número de éstos, para que ahora tenga la misma cantidad de departamentos
-            que la sucursal con mayor números de departamentos.
+            que la sucursal con mayor números de departamentos.\\
+            \textbf{Nota: } Suponemos que tanto el máximo con el mínimo son
+            únicos.
+            \begin{align*}
+                r &\leftarrow (_{id\_suc}G_{count(id\_dep)}(Departamento)) \\
+                r &\leftarrow \rho_{num\_dep(count(id\_dep))}(r) \\
+                d &\leftarrow max_{num\_dep}(r) \\
+                ma &\leftarrow \pi_{id\_suc}(\sigma_{num\_dep=d}(r)) \\
+                d &\leftarrow min_{num\_dep}(r) \\
+                mi &\leftarrow \pi_{id\_suc}(\sigma_{num\_dep=d}(r)) \\
+                dMa &\leftarrow \pi_{tipo}(ma \bowtie Departamento) \\
+                dMi &\leftarrow \pi_{tipo}(mi \bowtie Departamento) \\
+                depAgr &\leftarrow dMa - dMi \\
+                Departamento &\leftarrow Departamento \cup 
+                \{(id\_suc=mi, tipo=depAgr)\}
+            \end{align*}
         }
     \end{enumerate}
 
