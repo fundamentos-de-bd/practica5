@@ -1,4 +1,6 @@
 \documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
 
 % Formato de página
 \usepackage[letterpaper, margin = 1.5cm]{geometry}
@@ -61,10 +63,10 @@
         \item {
             Conocer los datos de las sucursales que tengas más de 15 años
             \begin{align*}
-                r &\leftarrow (_{id\_suc}G_{tiempoDesde(fecha\_reg)}(Sucursal)) \\
-                r &\leftarrow \rho_{edad(tiempoDesde(fecha\_reg))}(r) \\
-                r &\leftarrow \sigma_{edad > 15}(r) \\
-                r &\leftarrow r \bowtie Sucursal
+                r &\leftarrow (_{id\_suc}G_{((fecha\_actual-fecha\_reg)/365.25) > 15}(Sucursal)) \\
+                %r &\leftarrow \rho_{edad(tiempoDesde(fecha\_reg))}(r) \\
+                %r &\leftarrow \sigma_{edad > 15}(r) \\
+                %r &\leftarrow r \bowtie Sucursal
             \end{align*}
         }
         \item {
@@ -72,8 +74,8 @@
             trabajar de todos los empleados.
             \begin{align*}
                 r &\leftarrow Empleado \bowtie Personas \\
-                r &\leftarrow (_{CURP}G_{tiempoDesde(fecha\_nac)}(r))\\
-                r &\leftarrow \rho_{edad(tiempoDesde(fecha\_nac))}(r) \\
+                r &\leftarrow (_{CURP}G_{((fecha\_actual-fecha\_reg)/365.25)}(r))\\
+                r &\leftarrow \rho_{edad((fecha\_actual-fecha\_reg)/365.25)}(r) \\
                 r &\leftarrow \pi_{nombre, puesto, edad, fech\_reg}(r)
             \end{align*}
         }
@@ -85,8 +87,8 @@
                 r &\leftarrow \rho_{num\_trabajos(count(id\_empleado)))}(r)\\
                 r &\leftarrow \sigma_{num\_trabajos>1}(r)\\
                 r &\leftarrow r \bowtie Empleados \bowtie Persona \\
-                r &\leftarrow (_{CURP}G_{tiempoDesde(fecha\_nac)}(r))\\
-                r &\leftarrow \rho_{edad(tiempoDesde(fecha\_nac))}(r) \\
+                r &\leftarrow (_{CURP}G_{((fecha\_actual-fecha\_reg)/365.25)}(r))\\
+                r &\leftarrow \rho_{edad((fecha\_actual-fecha\_reg)/365.25)}(r) \\
                 r &\leftarrow \pi_{puesto, edad}(r)
             \end{align*}
         }
@@ -120,12 +122,15 @@
             la fecha de registro) en el programa de tarjeta digital de cada una
             de las sucursales registradas.
             \begin{align*}
-                r \leftarrow G_{max(tiempoEntre(hoy, fechaReg))}(Clientes)
+            r &\leftarrow _{id\_suc,id\_cliente}G_{((fecha\_actual-fecha\_reg)/365.25)}(Clientes \bowtie Sucursal)\\
+            r &\leftarrow \rho_{antig((fecha\_actual-fecha\_reg)/365.25)}(r)\\
+            r &\leftarrow _{id\_suc,id\_cliente}G_{Max(antig)} (r) \\           
             \end{align*}
         }
         \item {
             Conocer cuáles son los productos que tienen en común cada uno de los
             departamentos de las diferentes sucursales.
+            
         }
         \item {
             Conocer cuales son TODOS los productos que se tienen en cada uno de
@@ -134,6 +139,12 @@
         \item {
             Conocer cuál es la sucursal con mayor número de productos
             registrados en sus diferentes departamentos.
+            \begin{align*}
+            r &\leftarrow _{id\_suc}G_{count(id\_prod)}(Producto \bowtie Departamento)\\
+            r &\leftarrow \rho_{cant\_prod(count(id\_prod))}(r)\\
+            s &\leftarrow Max_{cant\_prod}(r)\\
+            r &\leftarrow \sigma_{cant\_prod=s}(r)\\
+            \end{align*}
         }
         \item {
             Eliminar a los empleados que tengan más de 3 trabajos en diferentes 
@@ -173,8 +184,8 @@
             \begin{align*}
                 r &\leftarrow \rho_{count(id\_sucursal) = num\_dep}
                 (_{id\_sucursal}G_{count(id\_sucursal)}(Departamento))\\
-                min &\leftarrow (_{id\_sucursal}G_{min(num_dep)(r)})
-                max &\leftarrow G_{max(num_dep)(r)}
+                min &\leftarrow (_{id\_sucursal}G_{min(num_dep)(r)})\\
+                max &\leftarrow G_{max(num_dep)(r)}\\
             \end{align*}
         }
     \end{enumerate}
