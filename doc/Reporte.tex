@@ -140,7 +140,11 @@
             departamentos de las diferentes sucursales.      
             \begin{align*}
                 r &\leftarrow \pi_{id\_suc}(Sucursal) \bowtie \pi_{id\dep}
-                (Departamento) \bowtie \pi_{id\_prod}(Producto)
+                (Departamento) \bowtie \pi_{id\_prod}(Producto) \\
+                numSuc &\leftarrow count(Sucursal) \\
+                r &\leftarrow (_{id\_dep, id\_prod}G_{count(id\_suc)}(r))
+                r &\leftarrow \rho_{numSucProd(count(id\_suc))}(r) \\
+                r &\leftarrow \sigma_{numSucProd = numSuc}(r)
             \end{align*}
         }
         \item {
