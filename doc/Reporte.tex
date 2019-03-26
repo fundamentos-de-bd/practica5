@@ -42,9 +42,10 @@
         \item Se cambia el discriminante de Departamento de Localización a Id dep.
         \item A Sucursal se le agrega el atributo de fecha fund, la fecha de 
         establecimiento de esa sucursal.
-        \item A Sucursal se le agrean los datos de su dirección.
+        \item A Sucursal se le agrean los datos de su dirección, es particular su
+        estado.
         \item A Persona se le agrega la fecha nac, la fecha de nacimiento.
-        \item A Producto se le agrega el atributo de descrr, la descripción. Y 
+        \item A Producto se le agrega el atributo de descr, la descripción. Y 
         se remplaza la llave compuesta por una llave sintética.
     \end{itemize}
 
@@ -120,7 +121,8 @@
             la fecha de registro) en el programa de tarjeta digital de cada una
             de las sucursales registradas.
             \begin{align*}
-                r \leftarrow G_{max(tiempoEntre(hoy, fechaReg))}(Clientes)
+                r &\leftarrow (_{id\_clientes}G_{min(fecha\_reg)}(Cliente)) \\
+                r &\leftarrow \pi_{id\_cliente}(r) \bowtie Cliente
             \end{align*}
         }
         \item {
@@ -130,52 +132,81 @@
         \item {
             Conocer cuales son TODOS los productos que se tienen en cada uno de
             los departamentos de las diferentes sucursales.
+            \begin{align*}
+                r \leftarrow Producto
+            \end{align*}
         }
         \item {
             Conocer cuál es la sucursal con mayor número de productos
             registrados en sus diferentes departamentos.
+            \begin{align*}
+                r &\leftarrow (_{id\_suc}G_{count(id\_suc)}(Departamento \bowtie Producto)) \\
+                r &\leftarrow \rho_{num\_prod(count(id\_suc))}(r) \\
+                r &\leftarrow \pi_{id\_suc}(_{id\_suc}G_{max(num\_prod)}(r)) \\
+                r &\leftarrow r \bowtie Sucursal
+            \end{align*}
         }
         \item {
             Eliminar a los empleados que tengan más de 3 trabajos en diferentes 
             sucursales.
             \begin{align*}
-                r &\leftarrow \rho_{count(id\_sucursal) = num\_trabajos}
-                (G_{count(id\_sucursal)}(Trabajar))\\
-                r &\leftarrow \sigma_{num\_trabajos > 3} (r) \\
-                r &\leftarrow \pi_{id\_empleado}(r) \bowtie Empleados\\
-                Empleados &\leftarrow Empleados - r
+                r &\leftarrow (_{id\_empleado}G_{count(id\_empleado)}
+                (\pi_{id\_empleado}(Trabajar))) \\
+                r &\leftarrow \rho_{num\_trabajos(count(id\_empleado)))}(r)\\
+                r &\leftarrow \sigma_{num\_trabajos>3}(r)\\
+                r &\leftarrow \pi_{id\_empleado}(r) \bowtie Empleado \\
+                Empleado &\leftarrow Empleado - r
             \end{align*}
         }
         \item {
             Eliminar a las sucursales que tengan menos de 1 departamento
             registrado.
+            \begin{align*}
+                r &\leftarrow \pi_{id\_suc}(Departamento)\\
+                r &\leftarrow r \bowtie Sucursal \\
+                Sucursal &\leftarrow r
+            \end{align*}
         }
         \item {
             Eliminar a los clientes que no hayan utilizado su tarjeta en los
             últimos tres meses.
             \begin{align*}
-                r &\leftarrow \rho_{tiempoEntre(hoy, fechaReg)=''antig}
-                (_{id\_cliente}G_{tiempoEntre(hoy, fechaReg)}(Cliente)) \\
-                r &\leftarrow \sigma_{antig >}
+                r &\leftarrow \pi_{id\_venta, fecha}(Venta) \bowtie TipoDePago \\
+                r &\leftarrow \pi_{num\_trans, fecha}(r) \bowtie Metodo \\
+                r &\leftarrow \pi_{num\_tarjeta, fecha}(r) \bowtie Tarjeta \\
+                r &\leftarrow \pi_{id\_cliente, fecha}(r) \\
+                r &\leftarrow (_{id_cliente}G_{max(fecha)}(r)) \\
+                r &\leftarrow \rho_{ult\_compra(max(fecha))(r)} \\
+                r &\leftarrow \sigma_{ult\_compra/30 > 3}(r) \\
+                r &\leftarrow \pi_{id\_cliente}(r) \bowtie Cliente \\
+                Cliente &\leftarrow Cliente - r
             \end{align*}
         }
         \item {
             Insertar una nueva sucursal en el estado de México.
+            \begin{align*}
+                maxId &\leftarrow Max_{id\_suc}(Sucursal)\\
+                Sucursal &\leftarrow Sucursal 
+                \cup \{(id\_suc = maxId+1, estado='Estado de Mexico', 
+                fecha\_fund = hoy)\}
+            \end{align*}
         }
         \item {
             Insertar la información de 3 departamentos a la sucursal que fue
             insertada anteriormente.
+            \begin{align*}
+                id\_s &\leftarrow Max_{id\_suc}(Sucursal)\\
+                maxId &\leftarrow Max_{id\_suc}(Departamento)\\
+                nSuc &\leftarrow \{(id\_dep = maxId+1, id\_suc=id\_s),
+                (id\_dep = maxId+2, id\_suc=id\_s),\\
+                &(id\_dep = maxId+3, id\_suc=id\_s)\}\\
+                Departamento &\leftarrow Departamento \cup nSuc
+            \end{align*}
         }
         \item {
             Actualizar el número de departamentos de la sucursal con menos
             número de éstos, para que ahora tenga la misma cantidad de departamentos
             que la sucursal con mayor números de departamentos.
-            \begin{align*}
-                r &\leftarrow \rho_{count(id\_sucursal) = num\_dep}
-                (_{id\_sucursal}G_{count(id\_sucursal)}(Departamento))\\
-                min &\leftarrow (_{id\_sucursal}G_{min(num_dep)(r)})
-                max &\leftarrow G_{max(num_dep)(r)}
-            \end{align*}
         }
     \end{enumerate}
 
