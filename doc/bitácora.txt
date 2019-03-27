@@ -1,0 +1,29 @@
+Práctica05-Bitácora
+
+24/03
+Inicio del proyecto. Se crean verisiones iniciales de las consultas 1-3, se plantean como
+modificaciones necesarias al diagrama:
+        Se agregan atributos a Empleado "fecha_reg" y "puesto" debido a que la información
+            previamente no estaba almacenada.
+        Se modifica la llave de Departamento a una llave sintética "Id_dep" por comodidad.
+        Se agrega a Sucursal "fecha_fund" debido a que previamente no estaba contemplado..
+
+25/03 Sesión 1
+Nos reunimos para revisar las consultas 1-3 y creamos versiones de las consultas 3-6.
+        Se agrega "fecha_nac" a Persona debido a que la necesitaba Empleado y decidimos
+            que podría ser útil que cliente la tuviera también.
+        Se agregó a Producto un atributo "descr" que no estaba contemplado y cambiamos
+            la llave compuesta por una llave sintética por comodidad.
+        Aunque originalmente no contemplamos que "Trabajar" se volviera una tabla porque
+            pensamos que era una relación uno a uno, la consulta 3 nos hizo replantear y como
+            resultado, la relación uno a muchos se volvió una tabla.
+25/03 Sesión 2
+Modificamos las consultas 1-6 para que fueran mejores (menos operaciones, un par de
+proyecciones) y terminamos todas las consultas salvo la 16 y la 8.
+        El único cambio generado fue modificar la dirección de una Sucursal para
+            contemplar el estado en el que esta. Agregamos un atributo "estado"
+26/03
+Para realizar las consultas 8 y 16 preguntamos en laboratorio y aprendimos sobre 
+"unique". Terminamos el reporte agregando las imágenes finales.
+
+FIN
